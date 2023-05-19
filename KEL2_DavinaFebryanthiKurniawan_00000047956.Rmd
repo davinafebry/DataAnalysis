@@ -1,0 +1,284 @@
+---
+title: "Data Analys Project Plot (Students Performance)"
+author: "Kelompok 2"
+        "Milson Prawira Yarchie (00000043670)", 
+        "Kevin Adrianus Mokalu (00000043928)", 
+        "Khadizza Khoirun Nadya (00000047877)", 
+        "Davina Kurniawan  (00000047956)"
+        "Catherine Antoni (00000048182)"
+---
+
+```{r}
+
+#membaca data
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(Rcmdr)
+library(psych)
+library(rpart)
+library(rpart.plot)
+
+mydata <- read_csv("StudentsPerformance.csv")
+str(mydata)
+#membuat data frame
+mydata <- as.data.frame(mydata)
+summary(mydata)
+
+## Replace column names
+colnames(mydata)
+namesOfColumns <- c("Gender","Race","Parent_Education","Lunch","Test_Prep","Math_Score","Reading_Score","Writing_Score")
+colnames(mydata) <- namesOfColumns
+
+table(mydata$Gender)
+table(mydata$Race)
+table(mydata$Parent_Education)
+table(mydata$Lunch)
+table(mydata$Test_Prep)
+
+new <- rep(1, nrow(mydata))                   
+mydata[ , ncol(mydata) + 1] <- new
+colnames(mydata)[which(names(mydata) == "...9")] <- "pass"
+for (i in 1:nrow(mydata)){
+  if((mydata$`Math_Score`[i]+ mydata$`Reading_Score`[i] + mydata$`Writing_Score`[i])/3 >= 70) {
+    mydata$pass[i] <-"pass"
+  }
+  else {
+    mydata$pass[i] <-"failed"
+  }
+}
+
+
+#Barplot pass
+pasmydatalot <- barplot(table(mydata$pass), main="Exam Status",ylim=c(0,700), col=rainbow(8))
+ypass <- as.matrix(table(mydata$pass))
+text(pasmydatalot,ypass,labels=as.character(ypass),pos=3)
+
+#Barplot Gender
+genderplot <- barplot(table(mydata$Gender), main="Gender",ylim=c(0,700), col=rainbow(8))
+ygender <- as.matrix(table(mydata$Gender))
+text(genderplot,ygender,labels=as.character(ygender),pos=3)
+
+#Barplot Parent Education
+parenteduplot <- barplot(table(mydata$Parent_Education), main="Parent Education",ylim=c(0,300), col=rainbow(8))
+yparentedu <- as.matrix(table(mydata$Parent_Education))
+text(parenteduplot,yparentedu,labels=as.character(yparentedu), pos = 3)
+
+##Barplot Lunch Education
+lunchplot <- barplot(table(mydata$Lunch), main="Lunch",ylim=c(0,700), col=rainbow(8))
+ylunch <- as.matrix(table(mydata$Lunch))
+text(lunchplot,ylunch,labels=as.character(ylunch),pos=3)
+
+#Barplot Race
+raceplot <- barplot(table(mydata$Race), main="Race",ylim=c(0,400), col=rainbow(8))
+yrace <- as.matrix(table(mydata$Race))
+text(raceplot,yrace,labels=as.character(yrace),pos=3)
+
+#Boxplot reading score dengan gender
+a1 <- ggplot(mydata, aes(Gender, Reading_Score, color = Test_Prep))
+a1 <- a1 + geom_boxplot()
+a1 <- a1 + ggtitle("Reading scores by Gender Boxplot")
+a1 <- a1 + xlab("Gender") + ylab("Reading Scores")
+a1
+
+#Boxplot writing score dengan gender
+b1 <- ggplot(mydata, aes(Gender, Writing_Score, color = Test_Prep))
+b1 <- b1 + geom_boxplot()
+b1 <- b1 + ggtitle("Writing scores by Gender Boxplot")
+b1 <- b1 + xlab("Gender") + ylab("Writing Scores")
+b1
+
+#Math score dengan gender
+c1 <- ggplot(mydata, aes(Gender, Math_Score, color = Test_Prep))
+c1 <- c1 + geom_boxplot()
+c1 <- c1 + ggtitle("Math scores by Gender Boxplot")
+c1 <- c1 + xlab("Gender") + ylab("Math Scores")
+c1
+
+#Boxplot parent education dengan math score
+d1 <- ggplot(mydata, aes(Parent_Education, Math_Score, color = Test_Prep))
+d1 <- d1 + geom_boxplot()
+d1 <- d1 + ggtitle("Math scores by Parent Education Boxplot")
+d1 <- d1 + xlab("Parent Education") + ylab("Math Scores")
+d1
+
+#Boxplot parent education dengan reading score
+e1 <- ggplot(mydata, aes(Parent_Education, Reading_Score, color = Test_Prep))
+e1 <- e1 + geom_boxplot()
+e1 <- e1 + ggtitle("Reading scores by Parent Education Boxplot")
+e1 <- e1 + xlab("Parent Education") + ylab("Reading Scores")
+e1
+
+#Boxplot parent education dengan writing score
+f1 <- ggplot(mydata, aes(Parent_Education, Writing_Score, color = Test_Prep))
+f1 <- f1 + geom_boxplot()
+f1 <- f1 + ggtitle("Writing scores by Parent Education Boxplot")
+f1 <- f1 + xlab("Parent Education") + ylab("Writing Scores")
+f1
+
+#Boxplot writing score dengan race
+g1 <- ggplot(mydata, aes(Race, Writing_Score, color = Test_Prep))
+g1 <- g1 + geom_boxplot()
+g1 <- g1 + ggtitle("Writing scores by Race")
+g1 <- g1 + xlab("Race") + ylab("Writing Scores")
+g1
+
+#Boxplot math score dengan race
+h1 <- ggplot(mydata, aes(Race, Math_Score, color = Test_Prep))
+h1 <- h1 + geom_boxplot()
+h1 <- h1 + ggtitle("Math scores by Race Boxplot")
+h1 <- h1 + xlab("Race") + ylab("Math Scores")
+h1
+
+#Boxplot reading score dengan race
+i1 <- ggplot(mydata, aes(Race, Reading_Score, color = Test_Prep))
+i1 <- i1 + geom_boxplot()
+i1 <- i1 + ggtitle("Reading scores by Race")
+i1 <- i1 + xlab("Race") + ylab("Reading Scores")
+i1
+
+#Boxplot math score dengan lunch
+j1 <- ggplot(mydata, aes(Lunch, Math_Score, color = Test_Prep))
+j1 <- j1 + geom_boxplot()
+j1 <- j1 + ggtitle("Math scores by Lunch Boxplot")
+j1 <- j1 + xlab("Lunch") + ylab("Math Scores")
+j1
+
+#Boxplot reading score dengan lunch
+k1 <- ggplot(mydata, aes(Lunch, Reading_Score, color = Test_Prep))
+k1 <- k1 + geom_boxplot()
+k1 <- k1 + ggtitle("Reading scores by Lunch Boxplot")
+k1 <- k1 + xlab("Lunch") + ylab("Reading Scores")
+k1
+
+#Boxplot lunch dengan writing score
+l1 <- ggplot(mydata, aes(Lunch, Writing_Score, color = Test_Prep))
+l1 <- l1 + geom_boxplot()
+l1 <- l1 + ggtitle("Writing scores by Lunch Boxplot")
+l1 <- l1 + xlab("Lunch") + ylab("Writing Scores")
+l1
+
+#ggplot
+ggplot(mydata, aes(x=Math_Score, y=Reading_Score,color=Writing_Score))+
+  geom_point()+
+  xlab("Math Score")+
+  ylab("Reading Score")+
+  ggtitle("Relationship between the students' math, reading, and writing scores")
+cor(mydata$Math_Score, mydata[c("Writing_Score","Reading_Score")])
+
+ggplot(mydata, aes(x=Math_Score, y=Reading_Score,color=Gender))+
+  geom_point()+
+  xlab("Math score")+
+  ylab("Reading score")+
+  ggtitle("Relationship between the students' maths and reading scores based on gender")
+
+ggplot(mydata, aes(x=Math_Score, y=Reading_Score,color=Parent_Education))+
+  geom_point()+
+  xlab("Math score")+
+  ylab("Reading score")+
+  ggtitle("Relationship between the students' maths and reading scores based on parent education")
+
+ggplot(mydata, aes(x=Math_Score, y=Reading_Score,color=Race))+
+  geom_point()+
+  xlab("Math score")+
+  ylab("Reading score")+
+  ggtitle("Relationship between the students' maths scores and reading scores based on race and ethnicity groups")
+
+#DECISION TREE
+#Creating Testing and Training datasets.
+set.seed(1)  
+sample = sample(nrow(data), floor(nrow(data) * 0.8))  #split the data as %80 for training and %20 dor test.
+train = data[sample,]
+test = data[-sample,]
+#cheking dimension of training and test data
+dim(train)
+dim(test)
+
+#creating model with training data for prediction of math score
+model_math1 = rpart(math.score~., data = train)
+summary(model_math1)
+pred_math = predict(model_math1, newdata = test)
+rpart.plot(model_math1, box.palette="RdBu", shadow.col="gray", nn=TRUE)
+
+data$test.preparation.course
+data$parental.level.of.education
+
+#creating model with training data for prediction of math score
+model_math1 = rpart(pass~lunch+test.preparation.course+parental.level.of.education, data = train)
+summary(model_math1)
+pred_math = predict(model_math1, newdata = test, type="class")
+rpart.plot(model_math1, box.palette="RdBu", shadow.col="gray", nn=TRUE)
+
+
+#accuracy
+predprob_dt<-predict(model_math1, test)
+library(ROCR)
+tree_prediction<-prediction(predprob_dt[,2], test$pass)
+tree_perf<-performance(tree_prediction, "tpr", "fpr")
+plot(tree_perf, colorize=TRUE)
+performance(tree_prediction, "auc")
+
+library(caret)
+table_tree1 <- table(pred_math,test$pass)
+confusionMatrix(table_tree1)
+
+#RANDOM FOREST
+##correlation test
+cor.test(mydata$Math_Score, mydata$Reading_Score)
+cor.test(mydata$Math_Score, mydata$Writing_Score)
+cor.test(mydata$Writing_Score, mydata$Reading_Score)
+
+##plot
+ggplot() +
+  geom_point(data = mydata, aes(x = mydata$Math_Score, y = mydata$Reading_Score)) +
+  theme_bw() +
+  theme_classic() +
+  xlab("Math Score") +
+  ylab("Reading Score")
+
+ggplot() +
+  geom_point(data = mydata, aes(x = mydata$Writing_Score, y = mydata$Reading_Score)) +
+  theme_bw() +
+  theme_classic() +
+  xlab("Writing Score") +
+  ylab("Reading Score")
+
+ggplot() +
+  geom_point(data = mydata, aes(x = mydata$Writing_Score, y = mydata$Math_Score)) +
+  theme_bw() +
+  theme_classic() +
+  xlab("Writing Score") +
+  ylab("Math Score")
+
+
+mydata1 <- mydata
+
+mydata1$Gender <- as.numeric(factor(mydata1$Gender, levels = unique(mydata1$Gender)))
+mydata1$Race <- as.numeric(factor(mydata1$Race, levels = unique(mydata1$Race)))
+mydata1$Parent_Education <- as.numeric(factor(mydata1$Parent_Education , levels = unique(mydata1$Parent_Education)))
+mydata1$Lunch  <- as.numeric(factor(mydata1$Lunch, levels = unique(mydata1$Lunch)))
+mydata1$Test_Prep <- as.numeric(factor(mydata1$Test_Prep, levels = unique(mydata1$Test_Prep)))
+mydata1$Test_Prep = as.factor(mydata1$Test_Prep)
+
+set.seed(47956)
+train <- sample(nrow(mydata1), 0.8 * nrow(mydata1), replace = FALSE)
+TrainingSet <- mydata1[train,]
+TestSet <- mydata1[-train,]
+
+str(TrainingSet)
+str(TestSet)
+
+# OOB Error
+Random_Forest <- randomForest(Test_Prep ~ ., data = TrainingSet, importance = TRUE, ntree = 500, mtry = 6)
+Random_Forest
+
+importance(Random_Forest)
+varImpPlot(Random_Forest)
+PredTest <- predict(Random_Forest, TestSet, type = "class")
+mean(PredTest == TestSet$Test_Prep)
+
+#Accuracy Random Florest
+rf <- predict(Random_Forest, TestSet)
+pred <- confusionMatrix(table(rf, TestSet$Test_Prep))
+pred
+```
