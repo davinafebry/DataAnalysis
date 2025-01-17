@@ -1,11 +1,5 @@
 ---
 title: "Data Analys Project Plot (Students Performance)"
-author: "Kelompok 2"
-        "Milson Prawira Yarchie (00000043670)", 
-        "Kevin Adrianus Mokalu (00000043928)", 
-        "Khadizza Khoirun Nadya (00000047877)", 
-        "Davina Kurniawan  (00000047956)"
-        "Catherine Antoni (00000048182)"
 ---
 
 ```{r}
